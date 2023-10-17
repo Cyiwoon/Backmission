@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<body>
+<table>
+    <tr>
+        <th>seq</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>entryDate</th>
+        <th>Update</th>
+        <th>Delete</th>
+    </tr>
+
+    <tr th:each="customer, customerStat : ${customer}">
+        <td th:text="${customerStat.count}"></td>
+        <td th:text="${customer.name}"></td>
+        <td th:text="${customer.age}"></td>
+        <td th:text="${customer.email}"></td>
+        <td th:text="${#temporals.format(customer.entryDate,'yyyy-dd-MM hh:mm')}"></td>
+        <td><a th:href="@{/customerspage/edit/{id}(id=${customer.id})}">Update</a></td>
+        <td><a th:href="@{/customerspage/delete/{id}(id=${customer.id})}">Delete</a></td>
+    </tr>
+
+</table>
+<p><a href="/customerspage/signup">insert</a></p>
+</body>
+</html>

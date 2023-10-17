@@ -2,6 +2,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CustomerReqDTO;
+import com.example.demo.dto.CustomerReqForm;
 import com.example.demo.dto.CustomerResDTO;
 import com.example.demo.entity.Customers;
 import com.example.demo.exception.BusinessException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,7 +34,7 @@ public class CustomerService {
 
     public CustomerResDTO getCustomersById(Long id){
         Customers customerEntity = customerRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(id + "User Not Found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(id + "Customer Not Found", HttpStatus.NOT_FOUND));
         CustomerResDTO customerResDTO = modelMapper.map(customerEntity, CustomerResDTO.class);
         return customerResDTO;
     }
@@ -43,25 +45,32 @@ public class CustomerService {
 
         List<CustomerResDTO> customerResDTOList = customerList.stream() // Stream<Customer>
                 //map(Function) Function의 추상메서드는 R apply(T t)
-                .map(user -> modelMapper.map(user, CustomerResDTO.class)) // Stream<CustomerResDTO>
-                // user-> = T /modelMapper.map(user,UserResDTO.class) = t
+                .map(customer -> modelMapper.map(customer, CustomerResDTO.class)) // Stream<CustomerResDTO>
+                // customer-> = T /modelMapper.map(customer,CustomerResDTO.class) = t
                 .collect(toList());//.collect(Collectors.toList()) //List<CustomerResDTO>
         return customerResDTOList;
     }
 
-    public CustomerResDTO updateCustomers(String email, CustomerReqDTO userReqDTO) {
+    public CustomerResDTO updateCustomers(String email, CustomerReqDTO customerReqDTO) {
         Customers existCustomer = customerRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new BusinessException(email + " User Not Found", HttpStatus.NOT_FOUND));
+                        new BusinessException(email + " Customer Not Found", HttpStatus.NOT_FOUND));
         //Dirty Checking 변경감지를 하므로 setter method만 호출해도 update query가 실행이 된다.
-        existCustomer.setName(userReqDTO.getName());
+        existCustomer.setName(customerReqDTO.getName());
         return modelMapper.map(existCustomer, CustomerResDTO.class);
     }
 
-    public void deleteUser(Long id) {
-        Customers customers = customerRepository.findById(id) //Optional<User>
+    public void updateCustomerForm(CustomerReqForm customerReqForm){
+        Customers existCustomer = customerRepository.findById(customerReqForm.getId())
                 .orElseThrow(() ->
-                        new BusinessException(id + " User Not Found", HttpStatus.NOT_FOUND));
+                        new BusinessException(customerReqForm.getId() + " Customer Not Found", HttpStatus.NOT_FOUND));
+        existCustomer.setName(customerReqForm.getName());
+    }
+
+    public void deleteCustomer(Long id) {
+        Customers customers = customerRepository.findById(id) //Optional<Customer>
+                .orElseThrow(() ->
+                        new BusinessException(id + " Customer Not Found", HttpStatus.NOT_FOUND));
         customerRepository.delete(customers);
     }
 

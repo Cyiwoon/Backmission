@@ -37,7 +37,7 @@ public class CustomerRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id){
-        customerService.deleteUser(id);
+        customerService.deleteCustomer(id);
         return ResponseEntity.ok(id+"User가 삭제처리 되었습니다.");
     }
 }
